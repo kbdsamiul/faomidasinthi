@@ -2,6 +2,7 @@
    PUBLICATIONS
    To add a paper, copy one block and edit it.
    type: "article", "review" or "chapter"
+   impact: the journal's impact factor (leave it out if the journal has none)
    Use <i>...</i> for species names. The name in ME is shown in bold.
    ========================================================= */
 const ME = "Sinthi, F.";
@@ -12,12 +13,12 @@ const PUBLICATIONS = [
   { type: "article", year: 2026,
     authors: "Hasanuzzaman, M., Sultana, A., Sinthi, F., Alam, S., Alam, M.M., Prasad, P.V.V.",
     title: "Selenium and seaweed extracts exhibit synergistic actions in regulating antioxidant defense in rice under salt stress",
-    source: "Chemical and Biological Technologies in Agriculture",
+    source: "Chemical and Biological Technologies in Agriculture", impact: "5.8",
     doi: "10.1186/s40538-026-00956-6" },
   { type: "article", year: 2025,
     authors: "Hasanuzzaman, M., Rummana, S., Sinthi, F., Alam, S., Raihan, M.R.H., Alam, M.M.",
     title: "Enhancing drought resilience in <i>Brassica campestris</i>: Antioxidant and physiological benefits of <i>Ascophyllum nodosum</i> extract and alginic acid",
-    source: "Plant Physiology and Biochemistry, 227, 110198",
+    source: "Plant Physiology and Biochemistry, 227, 110198", impact: "6.2",
     doi: "10.1016/j.plaphy.2025.110198" },
   { type: "article", year: 2025,
     authors: "Shaheenuzzamn, M., Alam, M.S., Miah, M.A.M., Rasheduzzaman, M., Hossain, M.H., Sinthi, F.",
@@ -27,7 +28,7 @@ const PUBLICATIONS = [
   { type: "article", year: 2024,
     authors: "Hasanuzzaman, M., Alam, M.M., Naz, F., Rummana, S., Siddika, A., Sultana, A., Sinthi, F., Prasad, P.V.V.",
     title: "Modulating reactive oxygen species and ion homeostasis for combined salt and cadmium stress tolerance in <i>Brassica campestris</i>: The role of beneficial microbes",
-    source: "Plant Stress, 14, 100605",
+    source: "Plant Stress, 14, 100605", impact: "8.1",
     doi: "10.1016/j.stress.2024.100605" },
 
   /* ---- Review article ---- */
@@ -93,6 +94,7 @@ const PUBLICATIONS = [
   /* ---- publications list and tabs ---- */
   const list = $("#pubs");
   const tabs = $$(".tabs button");
+  const IF_NOTE = "Impact factors are the 2025 Journal Impact Factors from Clarivate Journal Citation Reports, released in 2026.";
   function showPubs(type) {
     const rows = PUBLICATIONS.filter(p => p.type === type);
     list.innerHTML = rows.map((p, i) => `
@@ -100,6 +102,7 @@ const PUBLICATIONS = [
         <span class="pub__n">${String(i + 1).padStart(2, "0")}</span>
         <div>
           <h3 class="pub__title">${p.title}</h3>
+          ${p.impact ? `<span class="pub__if">Impact factor ${p.impact}</span>` : ""}
           <p class="pub__meta">${p.authors.replace(ME, "<b>" + ME + "</b>")} (${p.year}). ${p.source}.</p>
         </div>
         <a class="pub__doi" href="https://doi.org/${p.doi}" target="_blank" rel="noopener" aria-label="Open DOI for: ${p.title.replace(/<[^>]+>/g, "")}" title="Open DOI">↗</a>
@@ -110,8 +113,13 @@ const PUBLICATIONS = [
     t.addEventListener("click", () => {
       tabs.forEach(x => x.setAttribute("aria-selected", x === t));
       showPubs(t.dataset.type);
+      note.hidden = !PUBLICATIONS.some(p => p.type === t.dataset.type && p.impact);
     });
   });
+  const note = document.createElement("p");
+  note.className = "pubs__note";
+  note.textContent = IF_NOTE;
+  list.after(note);
   showPubs("article");
 
   /* ---- split the hero name into letters ---- */
